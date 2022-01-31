@@ -1,78 +1,34 @@
 import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material";
 import ReactDOM from "react-dom";
-import "./index.css";
-import styles from "./index.module.css";
+import { Header } from "./components";
+import { ChatPage, ProfilePage } from "./pages";
+import "./palette.css";
 
-// const FilmList = ({ films }) => {
-//   return films.map((film) => {
-//     return (
-//       <div>
-//         <h2>title: {film.title}</h2>
-//         <h2>year: {film.year}</h2>
-//       </div>
-//     );
-//   });
-// };
-
-// class ClassComponent extends React.Component {
-//   render() {
-//     const { age, films } = this.props;
-//     return (
-//       <div>
-//         <h1>Hello Class component</h1>
-//         <h2>Age: {age}</h2>
-//         <FilmList films={films} />
-//       </div>
-//     );
-//   }
-// }
-
-// function FunctionComponent({ age, films }) {
+// function App() {
 //   return (
 //     <div>
-//       <h1>Hello Function component</h1>
-//       <h2>Age: {age}</h2>
-//       <FilmList films={films} />
+//       <MessageList />
+//       <ChatList />
 //     </div>
 //   );
 // }
 
-// const Parent = () => {
-//   const age = 23;
-//   const films = [
-//     { title: "films1", year: 2020 },
-//     { title: "films2", year: 2020 },
-//   ];
-//   return (
-//     <div>
-//       <h1>Parent</h1>
-//       <ClassComponent age={age} films={films} />
-//       <hr />
-//       <FunctionComponent age={age} films={films} />
-//     </div>
-//   );
-// };
-
-function Message({ text }) {
-  return (
-    <div>
-      <h1 className={styles.message__text}>{text}</h1>
-    </div>
-  );
-}
-
-function App() {
-  const text = "Переданный пропсом техт-константа";
-  return (
-    <div>
-      <Message text={text} />
-    </div>
-  );
-}
+const theme = createTheme();
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/chat/*" element={<ChatPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/" element={<h1> Home Page</h1>} />
+        <Route path="/*" element={<h1>Server not found. Error 404</h1>} />
+      </Routes>
+    </BrowserRouter>
+    <ThemeProvider theme={theme}></ThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
