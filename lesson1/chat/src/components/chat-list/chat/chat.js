@@ -1,4 +1,4 @@
-import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { ListItem, ListItemIcon, ListItemText, Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { AccountCircle } from "@mui/icons-material";
 import styles from "./chat.module.css";
@@ -16,23 +16,26 @@ export const useStyles = makeStyles(() => {
   };
 });
 
-export function Chat({ title, selected, handleListItemClick }) {
+export function Chat({ title, selected, handleListItemClick, handleDelChat }) {
   const s = useStyles();
 
   return (
-    <ListItem
-      className={s.item}
-      button={true}
-      selected={selected}
-      onClick={handleListItemClick}
-    >
-      <ListItemIcon>
-        <AccountCircle fontSize="large" className={styles.icon} />
-      </ListItemIcon>
-      <div className={styles.description}>
-        <ListItemText className={styles.text} primary={title} />
-        <ListItemText className={styles.text} primary="12.30" />
-      </div>
-    </ListItem>
+    <>
+      <ListItem
+        className={s.item}
+        button={true}
+        selected={selected}
+        onClick={handleListItemClick}
+      >
+        <ListItemIcon>
+          <AccountCircle fontSize="large" className={styles.icon} />
+        </ListItemIcon>
+        <div className={styles.description}>
+          <ListItemText className={styles.text} primary={title} />
+          <ListItemText className={styles.text} primary="12.30" />
+        </div>
+        <Button onClick={handleDelChat}>X</Button>
+      </ListItem>
+    </>
   );
 }

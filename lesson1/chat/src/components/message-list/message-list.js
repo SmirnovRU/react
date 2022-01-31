@@ -1,53 +1,64 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Input, InputAdornment } from "@mui/material";
 import { Send } from "@mui/icons-material";
 import { useStyles } from "./use-styles";
 import { Message } from "./message";
+import { useParams } from "react-router-dom";
 
 export const MessageList = () => {
   const styles = useStyles();
+  const { roomId } = useParams();
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState({
+    room1: [
+      { author: "User", message: "Hello from User" },
+      { author: "Bot", message: "Hello from Bot" },
+    ],
+  });
   const ref = useRef(null);
 
   useEffect(() => {
     ref.current?.focus();
   }, []);
 
-  useEffect(() => {
-    const lastMessage = messages[messages.length - 1];
-    let timerId = null;
-
-    if (lastMessage?.author !== "Bot" && messages.length) {
-      timerId = setTimeout(() => {
-        setMessages([
+  const sendMessage = useCallback(
+    (message, author = "User") => {
+      if (message) {
+        setMessages({
           ...messages,
-          { author: "Bot", message: "Hello from Bot" },
-        ]);
+          [roomId]: [...(messages[roomId] ?? []), { author, message }],
+        });
+
+        setMessage("");
+      } else {
+        alert("Введите сообщение");
+      }
+    },
+    [roomId, messages]
+  );
+
+  useEffect(() => {
+    const messagessObj = messages[roomId] ?? [];
+    const lastMessage = messagessObj[messagessObj.length - 1];
+    if (messagessObj.length && lastMessage.author === "User") {
+      setTimeout(() => {
+        sendMessage("Hello from Bot", "Bot");
       }, 500);
     }
-    return () => clearInterval(timerId);
-  }, [messages]);
+  }, [messages, roomId, sendMessage]);
+
+  const messagessObj = messages[roomId] ?? [];
 
   const handlePressInput = ({ code }) => {
     if (code === "Enter") {
-      sendMessage();
-    }
-  };
-
-  const sendMessage = () => {
-    if (message) {
-      setMessages([...messages, { author: "User", message }]);
-      setMessage("");
-    } else {
-      alert("Введите сообщение");
+      sendMessage(message);
     }
   };
 
   return (
     <div>
       <div ref={ref}>
-        {messages.map((message, index) => (
+        {messagessObj.map((message, index) => (
           <Message key={index} message={message} />
         ))}
       </div>
@@ -61,7 +72,10 @@ export const MessageList = () => {
         endAdornment={
           message && (
             <InputAdornment position="end">
-              <Send className={styles.icon} onClick={sendMessage}></Send>
+              <Send
+                className={styles.icon}
+                onClick={() => sendMessage(message)}
+              ></Send>
             </InputAdornment>
           )
         }

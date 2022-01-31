@@ -24,10 +24,6 @@ p {
   margin: 5px;
 }
 
-.message p:first-child {
-  color: red;
-}
-
 .message p:last-child {
   color: #435564;
   text-align: right;
