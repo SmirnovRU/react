@@ -34,7 +34,7 @@ export function Chat({ title, selected, handleListItemClick, handleDelChat }) {
           <ListItemText className={styles.text} primary={title} />
           <ListItemText className={styles.text} primary="12.30" />
         </div>
-        <Button onClick={handleDelChat}>X</Button>
+        <Button onClick={() => handleDelChat(title)}>X</Button>
       </ListItem>
     </>
   );

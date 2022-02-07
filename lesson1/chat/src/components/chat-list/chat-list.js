@@ -1,26 +1,43 @@
 import { List, Button } from "@mui/material";
-import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Chat } from "./chat";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import {
+  createConversation,
+  deleteConversation,
+} from "../../store/conversations";
+import { useCallback } from "react";
+import { conversationsSelector } from "../../store/conversations";
 
 export const ChatList = () => {
-  const [chats, setChats] = useState(["room1", "room2", "room3"]);
   const { roomId } = useParams();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const conversations = useSelector(conversationsSelector);
 
   const addChat = () => {
     const chatName = prompt("Введите название чата");
-    setChats([...chats, chatName]);
+    const isValidName = !conversations.includes(chatName);
+
+    if (chatName && isValidName) {
+      dispatch(createConversation(chatName));
+    } else {
+      alert("Введите другое название чата");
+    }
   };
 
-  const deleteChat = () => {
-    setChats(chats.filter((chat) => chat !== roomId));
-    navigate(-1);
-  };
+  const deleteChat = useCallback(
+    (conversation) => {
+      dispatch(deleteConversation(conversation));
+      setTimeout(() => navigate("/chat"), 500);
+    },
+    [dispatch, navigate]
+  );
 
   return (
     <List component="nav">
-      {chats.map((chat) => (
+      {conversations.map((chat) => (
         <Link key={chat} to={`/chat/${chat}`}>
           <Chat
             title={chat}

@@ -1,11 +1,11 @@
 import { useSelector, useDispatch } from "react-redux";
 import { toggle_is_visible } from "../store/profile";
 import { ProfileForm } from "../components";
+import { profileSelector } from "../store/profile";
 
 export const ProfilePage = () => {
-  const { isVisible, firstName, lastName, numberTel } = useSelector(
-    (state) => state
-  );
+  const { isVisible, firstName, lastName, numberTel } =
+    useSelector(profileSelector);
   const dispatch = useDispatch();
   return (
     <>

@@ -4,61 +4,53 @@ import { Send } from "@mui/icons-material";
 import { useStyles } from "./use-styles";
 import { Message } from "./message";
 import { useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { messagesSelectorByRoomId, sendMessage } from "../../store/messages";
 
 export const MessageList = () => {
   const styles = useStyles();
   const { roomId } = useParams();
+  const messages = useSelector(messagesSelectorByRoomId(roomId));
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState({
-    room1: [
-      { author: "User", message: "Hello from User" },
-      { author: "Bot", message: "Hello from Bot" },
-    ],
-  });
   const ref = useRef(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     ref.current?.focus();
   }, []);
 
-  const sendMessage = useCallback(
+  const send = useCallback(
     (message, author = "User") => {
       if (message) {
-        setMessages({
-          ...messages,
-          [roomId]: [...(messages[roomId] ?? []), { author, message }],
-        });
+        dispatch(sendMessage(roomId, { author: author || "Bot", message }));
 
         setMessage("");
       } else {
         alert("Введите сообщение");
       }
     },
-    [roomId, messages]
+    [dispatch, roomId]
   );
 
   useEffect(() => {
-    const messagessObj = messages[roomId] ?? [];
-    const lastMessage = messagessObj[messagessObj.length - 1];
-    if (messagessObj.length && lastMessage.author === "User") {
+    const lastMessage = messages[messages.length - 1];
+    if (messages.length && lastMessage.author === "User") {
       setTimeout(() => {
         sendMessage("Hello from Bot", "Bot");
       }, 500);
     }
-  }, [messages, roomId, sendMessage]);
-
-  const messagessObj = messages[roomId] ?? [];
+  }, [messages, roomId, send]);
 
   const handlePressInput = ({ code }) => {
     if (code === "Enter") {
-      sendMessage(message);
+      send(message);
     }
   };
 
   return (
     <div>
       <div ref={ref}>
-        {messagessObj.map((message, index) => (
+        {messages.map((message, index) => (
           <Message key={index} message={message} />
         ))}
       </div>
