@@ -5,7 +5,10 @@ import { useStyles } from "./use-styles";
 import { Message } from "./message";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { messagesSelectorByRoomId, sendMessage } from "../../store/messages";
+import {
+  messagesSelectorByRoomId,
+  sendMessageWithBot,
+} from "../../store/messages";
 
 export const MessageList = () => {
   const styles = useStyles();
@@ -22,7 +25,9 @@ export const MessageList = () => {
   const send = useCallback(
     (message, author = "User") => {
       if (message) {
-        dispatch(sendMessage(roomId, { author: author || "Bot", message }));
+        dispatch(
+          sendMessageWithBot(roomId, { author: author || "Bot", message })
+        );
 
         setMessage("");
       } else {
@@ -31,15 +36,6 @@ export const MessageList = () => {
     },
     [dispatch, roomId]
   );
-
-  useEffect(() => {
-    const lastMessage = messages[messages.length - 1];
-    if (messages.length && lastMessage.author === "User") {
-      setTimeout(() => {
-        sendMessage("Hello from Bot", "Bot");
-      }, 500);
-    }
-  }, [messages, roomId, send]);
 
   const handlePressInput = ({ code }) => {
     if (code === "Enter") {
@@ -51,7 +47,7 @@ export const MessageList = () => {
     <div>
       <div ref={ref}>
         {messages.map((message, index) => (
-          <Message key={index} message={message} />
+          <Message key={index} message={message} roomId={roomId} />
         ))}
       </div>
       <Input
@@ -66,7 +62,7 @@ export const MessageList = () => {
             <InputAdornment position="end">
               <Send
                 className={styles.icon}
-                onClick={() => sendMessage(message)}
+                onClick={() => send(message)}
               ></Send>
             </InputAdornment>
           )

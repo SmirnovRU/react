@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "nanoid": "^3.1.32"
+    "date-fns": "^2.28.0",
+    "nanoid": "^3.1.32",
+    "redux-thunk": "^2.4.1"
   }
 }
