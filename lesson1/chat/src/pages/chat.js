@@ -1,7 +1,16 @@
 import { Routes, Route } from "react-router-dom";
 import { MessageList, ChatList, Layout } from "../components";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { getConversationsFB } from "../store/conversations/thunks";
 
 export const ChatPage = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getConversationsFB());
+  }, [dispatch]);
+
   return (
     <Routes>
       <Route

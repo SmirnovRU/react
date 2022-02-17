@@ -38,10 +38,10 @@ export const ChatList = () => {
   return (
     <List component="nav">
       {conversations.map((chat) => (
-        <Link key={chat} to={`/chat/${chat}`}>
+        <Link key={chat.title} to={`/chat/${chat.title}`}>
           <Chat
-            title={chat}
-            selected={roomId === chat}
+            title={chat.title}
+            selected={roomId === chat.title}
             handleDelChat={deleteChat}
           />
         </Link>

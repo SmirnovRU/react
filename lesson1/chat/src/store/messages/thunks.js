@@ -2,7 +2,7 @@ import { sendMessage } from ".";
 
 export const sendMessageWithBot = (roomId, message) => (dispatch, getState) => {
   dispatch(sendMessage(roomId, message));
-  if (message.author == "User") {
+  if (message.author === "User") {
     setTimeout(() => {
       dispatch(
         sendMessage(roomId, {
