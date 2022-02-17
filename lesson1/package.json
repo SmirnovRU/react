@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "axios": "^0.26.0",
+    "date-fns": "^2.28.0",
+    "firebase": "^8.10.0",
+    "nanoid": "^3.1.32",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^2.4.1"
+  }
+}
