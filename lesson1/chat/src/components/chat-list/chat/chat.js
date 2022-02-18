@@ -26,6 +26,7 @@ export function Chat({ title, selected, handleListItemClick, handleDelChat }) {
         button={true}
         selected={selected}
         onClick={handleListItemClick}
+        data-testid="wrapper"
       >
         <ListItemIcon>
           <AccountCircle fontSize="large" className={styles.icon} />
