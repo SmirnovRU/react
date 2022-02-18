@@ -1,78 +1,101 @@
 import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material";
 import ReactDOM from "react-dom";
-import "./index.css";
-import styles from "./index.module.css";
+import { Provider } from "react-redux";
+import { Header, PrivateRoute, PublickRoute } from "./components";
+import { store } from "./store";
+import { firebaseApp } from "./api/firebase";
+import { useEffect, useState } from "react";
+import {
+  ChatPage,
+  GistPages,
+  ProfilePage,
+  LoginPage,
+  SignUpPage,
+} from "./pages";
+import "./palette.css";
 
-// const FilmList = ({ films }) => {
-//   return films.map((film) => {
-//     return (
-//       <div>
-//         <h2>title: {film.title}</h2>
-//         <h2>year: {film.year}</h2>
-//       </div>
-//     );
-//   });
-// };
-
-// class ClassComponent extends React.Component {
-//   render() {
-//     const { age, films } = this.props;
-//     return (
-//       <div>
-//         <h1>Hello Class component</h1>
-//         <h2>Age: {age}</h2>
-//         <FilmList films={films} />
-//       </div>
-//     );
-//   }
-// }
-
-// function FunctionComponent({ age, films }) {
+// function App() {
 //   return (
 //     <div>
-//       <h1>Hello Function component</h1>
-//       <h2>Age: {age}</h2>
-//       <FilmList films={films} />
+//       <MessageList />
+//       <ChatList />
 //     </div>
 //   );
 // }
 
-// const Parent = () => {
-//   const age = 23;
-//   const films = [
-//     { title: "films1", year: 2020 },
-//     { title: "films2", year: 2020 },
-//   ];
-//   return (
-//     <div>
-//       <h1>Parent</h1>
-//       <ClassComponent age={age} films={films} />
-//       <hr />
-//       <FunctionComponent age={age} films={films} />
-//     </div>
-//   );
-// };
+const theme = createTheme();
 
-function Message({ text }) {
+const App = () => {
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    firebaseApp.auth().onAuthStateChanged((user) => {
+      if (user) {
+        setSession(user);
+      } else {
+        setSession(null);
+      }
+    });
+  }, []);
+
+  const isAuth = !!session;
+
   return (
-    <div>
-      <h1 className={styles.message__text}>{text}</h1>
-    </div>
+    <React.StrictMode>
+      <Provider store={store}>
+        <BrowserRouter>
+          <Header session={session} />
+          <Routes>
+            <Route
+              path="/chat/*"
+              element={
+                <PrivateRoute isAuth={isAuth}>
+                  <ChatPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute isAuth={isAuth}>
+                  <ProfilePage />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/" element={<h1> Home Page</h1>} />
+            <Route
+              path="/gists"
+              element={
+                <PrivateRoute isAuth={isAuth}>
+                  <GistPages />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <PublickRoute isAuth={isAuth}>
+                  <LoginPage />
+                </PublickRoute>
+              }
+            />
+            <Route
+              path="/sign-up"
+              element={
+                <PublickRoute isAuth={isAuth}>
+                  <SignUpPage />
+                </PublickRoute>
+              }
+            />
+            <Route path="/*" element={<h1>Server not found. Error 404</h1>} />
+          </Routes>
+        </BrowserRouter>
+        <ThemeProvider theme={theme}></ThemeProvider>
+      </Provider>
+    </React.StrictMode>
   );
-}
+};
 
-function App() {
-  const text = "Переданный пропсом техт-константа";
-  return (
-    <div>
-      <Message text={text} />
-    </div>
-  );
-}
-
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById("root")
-);
+ReactDOM.render(<App />, document.getElementById("root"));
